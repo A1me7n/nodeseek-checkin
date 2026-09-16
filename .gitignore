@@ -1,0 +1,21 @@
+# 登录态与凭据（绝对不要提交）
+.nsk_session.json
+.nsk_session.json.tmp
+*.session.json
+.nsk_email
+.nsk-ch-profile/
+
+# 运行产物与日志
+*.log
+cron.out
+__pycache__/
+*.pyc
+*.pyo
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+
+# 部署时临时放安装包的目录
+nsk-deploy/
