@@ -10,7 +10,7 @@ set -euo pipefail
 
 DIR=/root/nsk
 SESSION=/root/.nsk_session.json
-VENV=/root/nsk-venv
+VENV=/opt/nsk-venv
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WITH_BROWSER=0
 [ "${1:-}" = "--with-browser" ] && WITH_BROWSER=1

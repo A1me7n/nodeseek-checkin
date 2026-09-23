@@ -29,13 +29,13 @@ bash install.sh --with-browser
 #    （发码接口需过 Turnstile，脚本做不到，必须人工点一次）
 # 2. 把邮件里的验证码填进来：
 export NSK_EMAIL=你的邮箱
-/root/nsk-venv/bin/python /root/nsk/checkin.py --login <验证码>
+/opt/nsk-venv/bin/python /root/nsk/checkin.py --login <验证码>
 ```
 
 ## 用法
 
 ```bash
-P=/root/nsk-venv/bin/python          # 装了浏览器依赖用这个；纯签到用 python3 也行
+P=/opt/nsk-venv/bin/python          # 装了浏览器依赖用这个；纯签到用 python3 也行
 
 $P /root/nsk/checkin.py              # 签到（默认手气 1~10 鸡腿）
 $P /root/nsk/checkin.py --status     # 只看登录态，不签到
