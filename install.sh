@@ -8,7 +8,7 @@
 # 需要同目录下有 checkin.py；如果有 .nsk_session.json 也会一并装好（登录态）。
 set -euo pipefail
 
-DIR=/root/nsk
+DIR=/opt/nodeseek-checkin
 SESSION=/root/.nsk_session.json
 VENV=/opt/nsk-venv
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
