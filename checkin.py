@@ -2,15 +2,16 @@
 # -*- coding: utf-8 -*-
 """NodeSeek 每日签到（单文件版）
 
-  /root/nsk-venv/bin/python checkin.py                # 签到（默认试试手气）
-  /root/nsk-venv/bin/python checkin.py --status       # 只看登录态，不签到
-  /root/nsk-venv/bin/python checkin.py --refresh      # 只刷 Cloudflare clearance
-  /root/nsk-venv/bin/python checkin.py --login <验证码>  # 邮箱验证码重新登录
+  python3 checkin.py                # 签到（默认试试手气）
+  python3 checkin.py --status       # 只看登录态，不签到
+  python3 checkin.py --refresh      # 只刷 Cloudflare clearance
+  python3 checkin.py --login <验证码>  # 邮箱验证码重新登录
 
   NS_RANDOM=false ... checkin.py                      # 改成固定 5 鸡腿
 
 签到被 Cloudflare 拦会自动过盾重试一次。退出码：0 成功/已签 · 2 登录态失效 · 3 其它失败。
-浏览器部分要 playwright，所以用 /root/nsk-venv/bin/python 跑。
+过盾/登录要 playwright + 一个 X display（本机 D-Bus 环境用 xvfb-run；容器版见 Dockerfile）。
+文件路径都能用环境变量覆盖：NSK_STATE / NSK_PROFILE / NSK_LOG / NSK_EMAIL_FILE。
 """
 import glob
 import json
@@ -22,10 +23,11 @@ import urllib.error
 import urllib.request
 
 BASE = "https://www.nodeseek.com"
-STATE = "/root/.nsk_session.json"      # 会话 {ua, cookies{}}，权限 600
-PROFILE = "/root/.nsk-ch-profile"      # 持久化浏览器 profile
-LOG = "/root/nsk/checkin.log"          # 运行日志（JSONL，超 200 行自动截半）
-EMAIL_FILE = "/root/.nsk_email"        # 一行邮箱地址（600）；也可用环境变量 NSK_EMAIL
+# 路径都可用环境变量覆盖（容器/自定义目录部署用），默认值兼容老部署
+STATE = os.environ.get("NSK_STATE", "/root/.nsk_session.json")        # 会话 {ua, cookies{}}，权限 600
+PROFILE = os.environ.get("NSK_PROFILE", "/root/.nsk-ch-profile")      # 持久化浏览器 profile
+LOG = os.environ.get("NSK_LOG", "/root/nsk/checkin.log")              # 运行日志（JSONL，超 200 行自动截半）
+EMAIL_FILE = os.environ.get("NSK_EMAIL_FILE", "/root/.nsk_email")     # 一行邮箱地址（600）；也可用环境变量 NSK_EMAIL
 
 
 def email():
@@ -50,7 +52,15 @@ def save_session(ua, cookies):
     with open(tmp, "w") as f:
         json.dump({"ua": ua, "cookies": cookies}, f, ensure_ascii=False, indent=2)
     os.chmod(tmp, 0o600)
-    os.replace(tmp, STATE)             # 原子替换，避免读到半截
+    try:
+        os.replace(tmp, STATE)         # 原子替换，避免读到半截
+    except OSError:
+        # 容器里 STATE 是 bind-mount 的单文件，rename 会 EBUSY → 退化为原地覆盖
+        with open(STATE, "w") as f:
+            with open(tmp) as g:
+                f.write(g.read())
+        os.chmod(STATE, 0o600)
+        os.remove(tmp)
 
 
 # ---------------- 接口 ----------------

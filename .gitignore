@@ -19,3 +19,7 @@ __pycache__/
 
 # 部署时临时放安装包的目录
 nsk-deploy/
+
+# 运行时数据(含登录态/浏览器 profile,绝对不要提交)
+data/
+README-运维.md
