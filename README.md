@@ -19,7 +19,7 @@ bash install.sh --with-browser
 ```
 
 安装脚本会：装 python3（必需）→ 可选装 playwright + chromium + xvfb →
-把 `checkin.py` 装到 `/root/nsk/` → 提示放入登录态 → 写 cron → 跑一次自检。
+把 `checkin.py` 装到 `/opt/nodeseek-checkin/` → 提示放入登录态 → 写 cron → 跑一次自检。
 
 **登录态从哪来**：本工具靠 NodeSeek 的会话 cookie（`/root/.nsk_session.json`）签到，
 需要先做一次邮箱验证码登录（见下）。
@@ -29,7 +29,7 @@ bash install.sh --with-browser
 #    （发码接口需过 Turnstile，脚本做不到，必须人工点一次）
 # 2. 把邮件里的验证码填进来：
 export NSK_EMAIL=你的邮箱
-/opt/nsk-venv/bin/python /root/nsk/checkin.py --login <验证码>
+/opt/nsk-venv/bin/python /opt/nodeseek-checkin/checkin.py --login <验证码>
 ```
 
 ## 用法
@@ -37,12 +37,12 @@ export NSK_EMAIL=你的邮箱
 ```bash
 P=/opt/nsk-venv/bin/python          # 装了浏览器依赖用这个；纯签到用 python3 也行
 
-$P /root/nsk/checkin.py              # 签到（默认手气 1~10 鸡腿）
-$P /root/nsk/checkin.py --status     # 只看登录态，不签到
-$P /root/nsk/checkin.py --refresh    # 手动过 Cloudflare 盾，刷新 clearance
-$P /root/nsk/checkin.py --login <码>  # 邮箱验证码重新登录
+$P /opt/nodeseek-checkin/checkin.py              # 签到（默认手气 1~10 鸡腿）
+$P /opt/nodeseek-checkin/checkin.py --status     # 只看登录态，不签到
+$P /opt/nodeseek-checkin/checkin.py --refresh    # 手动过 Cloudflare 盾，刷新 clearance
+$P /opt/nodeseek-checkin/checkin.py --login <码>  # 邮箱验证码重新登录
 
-NS_RANDOM=false $P /root/nsk/checkin.py   # 改成固定 5 鸡腿
+NS_RANDOM=false $P /opt/nodeseek-checkin/checkin.py   # 改成固定 5 鸡腿
 ```
 
 退出码：`0` 成功/今日已签 · `1` 参数或配置缺失 · `2` 登录态失效 · `3` 其它失败
