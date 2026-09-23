@@ -23,3 +23,4 @@ nsk-deploy/
 # 运行时数据(含登录态/浏览器 profile,绝对不要提交)
 data/
 README-运维.md
+deploy/
